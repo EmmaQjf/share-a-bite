@@ -3,9 +3,11 @@ import {likeComment} from '../../utilities/comments-api'
 import {Heart} from 'lucide-react'
 
 
+
 export default function Comment(
     {comment}
 ){
+
 
 
     async function handleLikeComment(CommentId) {
@@ -24,6 +26,7 @@ export default function Comment(
             <h3>{comment.user.name}</h3>
             <h3>{comment.body}</h3>
             <Heart onClick={()=>{handleLikeComment(comment._id)}}/>
+            
         </>
     )
 }
