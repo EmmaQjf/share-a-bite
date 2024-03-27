@@ -16,22 +16,24 @@ export default function UserShowPage(
 ){
     const {userId} = useParams() 
 
-    //below is to show the current logged-in user's info
-
-    const [contacts, setContacts] = useState([])
-    const [posts, setPosts] = useState([])
     const [profilePic, setProfilePic] = useState([])
+    const [userName, setUserName] = useState([])
+    const [posts, setPosts] = useState([])
+  
     const [favRestaurants, setFavRestaurants] = useState([])
     const [showUpdateUserForm, setShowUpdateUserForm] = useState(false)
+
+    const [contacts, setContacts] = useState([]) //get all the contacts populated
+
     const [newUser, setNewUser] = useState(null)
-    const [userName, setUserName] = useState([])
     const [newUserContacts,setNewUserContacts] = useState([])
-    const [changeFollowBtn,setChangeFollowBtn] = useState(false)
-    const [userContactIds, setUserContactIds] = useState([])
+    const [userContactIds, setUserContactIds] = useState([]) //get all the logged-in-user contact ids 
+    const [clickBtn, setClickBtn] = useState(false)
 
     console.log(userContactIds)
     console.log(newUserContacts)
 
+    // logged-in-user contacts with only ids
     useEffect(function(){
         async function getUserContactIds(){
             try {
@@ -44,7 +46,7 @@ export default function UserShowPage(
         getUserContactIds()
     },[])
 
-   
+   // get the user's profile, name , posts, contacts + loggedin user's contacts populated , rerender when we see different user
     useEffect(function(){
         
         async function getAllPosts(){
@@ -89,6 +91,7 @@ export default function UserShowPage(
            
     },[userId])
    
+   
     useEffect(function(){
         async function getnewContacts(){
             try {
@@ -102,6 +105,8 @@ export default function UserShowPage(
          setUser(user)
     },[userContactIds])
 
+
+     //functions 
     const deleteAccount = async(id) =>{
         try{
             await userAPI.deleteUser(id)
@@ -115,7 +120,6 @@ export default function UserShowPage(
     const addContact = async(id) =>{
         try{
             await userAPI.addContact(id)
-            setChangeFollowBtn(true)
             const contactIds = userContactIds.concat(userId)
             setUserContactIds(contactIds)
             const otherContactIds = newUserContacts.concat(user._id)
@@ -130,7 +134,7 @@ export default function UserShowPage(
     const deleteContact = async(id) =>{
         try{
             await userAPI.deleteContact(id)
-            setChangeFollowBtn(false)
+       
             const index1 = userContactIds.indexOf(userId)
             const index2 = newUserContacts.indexOf(user._id)
             userContactIds.splice(index1, 1)
@@ -144,6 +148,7 @@ export default function UserShowPage(
     }
     
     console.log(newUser)
+    console.log(user)
     console.log(!userContactIds.includes(userId))
     console.log(contacts)
    
@@ -162,6 +167,7 @@ export default function UserShowPage(
           {user._id === userId? <ContactList contacts={contacts} user={user} userId={userId} deleteContact={deleteContact}/> :<></>}
           
           {/* following and add contact */}
+          {/*  userContactIds gets changed and rerender contacts*/}
           {
             user._id !== userId && !userContactIds.includes(userId)? <button onClick={()=>addContact(userId)}>follow</button>:
             <></>
@@ -170,6 +176,8 @@ export default function UserShowPage(
             user._id !== userId && userContactIds.includes(userId)? 
             <button onClick={()=>deleteContact(userId)}>unfollow</button>:<></>
           }
+
+
           {/* unfollowing and delete contact */}
 
           {/* click button to display or hid the UpdateUserForm*/}
